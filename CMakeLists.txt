@@ -1,6 +1,7 @@
 cmake_minimum_required (VERSION 3.8)
 set(exe_name maolib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/settings.json DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
@@ -10,6 +11,7 @@ set(all_libs
 	maolib_json 
 	maolib_openapi
 )
+include_directories(${all_libs})
 set(project_file_types 
 	*.cpp 
 	*.c 
@@ -29,7 +31,8 @@ foreach(this_lib ${all_libs})
 endforeach()
 
 add_executable(${exe_name} ${all_files})
-include_directories(${all_libs})
+target_link_libraries(${exe_name} ${all_libs})
+
 
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)

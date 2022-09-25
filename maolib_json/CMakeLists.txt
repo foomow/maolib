@@ -4,5 +4,4 @@ file(GLOB lib_files
 	LIST_DIRECTORIES false
 	${project_file_types}
 	)
-set(all_files ${all_files} ${lib_files} PARENT_SCOPE)
-add_library(${lib_name} SHARED ${lib_files})
+add_library(${lib_name} STATIC ${lib_files})
