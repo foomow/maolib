@@ -20,7 +20,7 @@ namespace maolib {
 		protected:
 			J_TYPE _type;
 			string _json_string;			
-			map<string, JsonValue> _members;
+			map<string, JsonValue*> _members;
 			void parse_value (list<char>& charlist)override;
 			void parse_object(list<char>& charlist);
 		};

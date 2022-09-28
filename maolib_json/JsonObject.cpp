@@ -26,13 +26,13 @@ namespace maolib {
 				charlist.pop_front();
 				_TO_NEXT;
 				if (charlist.front() == '{') {
-					JsonObject value; 
-					value.parse_value(charlist);
+					JsonObject* value=new JsonObject();
+					value->parse_value(charlist);
 					_members[name] = value;
 				}
 				else {
-					JsonValue value;
-					value.parse_value(charlist);
+					JsonValue* value=new JsonValue();
+					value->parse_value(charlist);
 					_members[name] = value;
 				}
 				_TO_NEXT;

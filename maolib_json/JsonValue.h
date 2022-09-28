@@ -6,6 +6,7 @@ using namespace std;
 #define _TO_END trim_space(charlist); if (!charlist.empty())throw "syntax error";
 namespace maolib {
 	namespace json {
+		
 		enum J_TYPE {
 			J_INVALID,
 			J_NULL,
