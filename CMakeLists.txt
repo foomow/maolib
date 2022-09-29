@@ -37,8 +37,6 @@ file(GLOB all_files
 add_executable(${exe_name} ${all_files})
 target_link_libraries(${exe_name} ${all_lib})
 
-
-
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET ${exe_name} PROPERTY CXX_STANDARD 20)
 endif()

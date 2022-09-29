@@ -5,3 +5,4 @@ file(GLOB lib_files
 	${project_file_types}
 	)
 add_library(${lib_name} STATIC ${lib_files})
+set_target_properties (${lib_name} PROPERTIES LINKER_LANGUAGE CXX)
