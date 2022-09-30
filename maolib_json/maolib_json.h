@@ -6,12 +6,12 @@
 #include <exception>
 using namespace std;
 #ifdef _WIN32
-#define _THROW(msg) throw new exception(msg)
+#define _THROW_ERROR(msg) throw new exception(msg)
 #else
-#define _THROW(msg) do{throw -1;cout<<msg<<endl;}while(0);
+#define _THROW_ERROR(msg) do{throw -1;cout<<msg<<endl;}while(0);
 #endif
-#define _TO_NEXT trim_space(charlist); if (charlist.empty())_THROW("syntax error");
-#define _TO_END trim_space(charlist); if (!charlist.empty())_THROW("syntax error");
+#define _TO_NEXT trim_space(charlist); if (charlist.empty())_THROW_ERROR("syntax error");
+#define _TO_END trim_space(charlist); if (!charlist.empty())_THROW_ERROR("syntax error");
 namespace maolib {
 	namespace json {
 		enum J_TYPE {
@@ -44,8 +44,8 @@ namespace maolib {
 			inline double toDouble();
 			long toLong();
 			long long toLLong();
-			int Append(Json &json);
-			int Insert(Json& json,size_t idx);
+			size_t Append(Json &json);
+			size_t Insert(Json& json,size_t idx);
 			void Remove(string key);
 			void Remove(size_t idx);
 			void Clear();
