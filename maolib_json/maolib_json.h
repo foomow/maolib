@@ -8,7 +8,7 @@ using namespace std;
 #ifdef _WIN32
 #define _THROW_ERROR(msg) throw new exception(msg)
 #else
-#define _THROW_ERROR(msg) do{throw -1;cout<<msg<<endl;}while(0);
+#define _THROW_ERROR(msg) do{throw -1;std::cout<<msg<<std::endl;}while(0);
 #endif
 #define _TO_NEXT trim_space(charlist); if (charlist.empty())_THROW_ERROR("syntax error");
 #define _TO_END trim_space(charlist); if (!charlist.empty())_THROW_ERROR("syntax error");
