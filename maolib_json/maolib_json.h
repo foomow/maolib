@@ -5,8 +5,13 @@
 #include <string>
 #include <exception>
 using namespace std;
-#define _TO_NEXT trim_space(charlist); if (charlist.empty())throw new exception("syntax error");
-#define _TO_END trim_space(charlist); if (!charlist.empty())throw new exception("syntax error");
+#ifdef _WIN32
+#define _THROW(msg) throw new exception(msg)
+#else
+#define _THROW(msg) do{throw -1;cout<<msg<<endl;}while(0);
+#endif
+#define _TO_NEXT trim_space(charlist); if (charlist.empty())_THROW("syntax error");
+#define _TO_END trim_space(charlist); if (!charlist.empty())_THROW("syntax error");
 namespace maolib {
 	namespace json {
 		enum J_TYPE {

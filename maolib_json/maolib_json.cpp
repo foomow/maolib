@@ -39,7 +39,7 @@ namespace maolib {
 				return _members[key];
 				break;
 			default:
-				throw new exception("invalid operation");
+				_THROW("invalid operation");
 				break;
 			}
 		}
@@ -49,7 +49,7 @@ namespace maolib {
 				return _elements[idx];
 				break;
 			default:
-				throw new exception("invalid operation");
+				_THROW("invalid operation");
 				break;
 			}
 		}
@@ -92,7 +92,7 @@ namespace maolib {
 				return _json_string;
 				break;
 			default:
-				throw new exception("invalid operation");
+				_THROW("invalid operation");
 				break;
 			}
 		}
@@ -103,7 +103,7 @@ namespace maolib {
 				return stoi(_json_string);
 				break;
 			default:
-				throw new exception("invalid operation");
+				_THROW("invalid operation");
 				break;
 			}
 		}
@@ -114,7 +114,7 @@ namespace maolib {
 				return stod(_json_string);
 				break;
 			default:
-				throw new exception("invalid operation");
+				_THROW("invalid operation");
 				break;
 			}
 		}
@@ -125,7 +125,7 @@ namespace maolib {
 				return stol(_json_string);
 				break;
 			default:
-				throw new exception("invalid operation");
+				_THROW("invalid operation");
 				break;
 			}
 		}
@@ -136,7 +136,7 @@ namespace maolib {
 				return stoll(_json_string);
 				break;
 			default:
-				throw new exception("invalid operation");
+				_THROW("invalid operation");
 				break;
 			}
 		}
@@ -147,7 +147,7 @@ namespace maolib {
 				return _elements.size();;
 				break;
 			default:
-				throw new exception("invalid operation");
+				_THROW("invalid operation");
 				break;
 			}
 		}
@@ -160,7 +160,7 @@ namespace maolib {
 					return _elements.size();
 					break;
 				default:
-					throw new exception("invalid operation");
+					_THROW("invalid operation");
 					break;
 				}
 			}
@@ -172,7 +172,7 @@ namespace maolib {
 				return;
 				break;
 			default:
-				throw new exception("invalid operation");
+				_THROW("invalid operation");
 				break;
 			}
 		}
@@ -184,7 +184,7 @@ namespace maolib {
 					return;
 					break;
 				default:
-					throw new exception("invalid operation");
+					_THROW("invalid operation");
 					break;
 				}
 			}
@@ -200,7 +200,7 @@ namespace maolib {
 				return;
 				break;
 			default:
-				throw new exception("invalid operation");
+				_THROW("invalid operation");
 				break;
 			}
 		}
@@ -217,7 +217,7 @@ namespace maolib {
 				return _json_string.size();
 				break;
 			default:
-				throw new exception("invalid operation");
+				_THROW("invalid operation");
 				break;
 			}
 		}
@@ -306,13 +306,13 @@ namespace maolib {
 				parse_array(charlist);
 				break;
 			default:
-				throw new exception("syntax error");
+				_THROW("syntax error");
 				break;
 			}
 		}
 		string Json::parse_string(list<char>& charlist) {
 			_TO_NEXT;
-			if (charlist.front() != '\"')throw new exception("syntax error");
+			if (charlist.front() != '\"')_THROW("syntax error");
 			charlist.pop_front();
 			string ret = "";
 			char last_char = '\0';
@@ -320,19 +320,19 @@ namespace maolib {
 				last_char = charlist.front();
 				ret += last_char;
 				charlist.pop_front();
-				if (charlist.empty())throw new exception("syntax error");
+				if (charlist.empty())_THROW("syntax error");
 			}
 			charlist.pop_front();
 			return ret;
 		}
 		string Json::parse_number(list<char>& charlist) {
 			_TO_NEXT;
-			if (charlist.front() < '0' || charlist.front() > '9')throw new exception("syntax error");
+			if (charlist.front() < '0' || charlist.front() > '9')_THROW("syntax error");
 			string ret = "";
 			bool hasdot = false;
 			do {
 				if (charlist.front() == '.') {
-					if (hasdot)throw new exception("syntax error");
+					if (hasdot)_THROW("syntax error");
 					hasdot = true;
 				}
 				ret += charlist.front();
@@ -343,21 +343,21 @@ namespace maolib {
 		void Json::parse_object(list<char>& charlist)
 		{
 			_TO_NEXT;
-			if (charlist.front() != '{')throw new exception("syntax error");
+			if (charlist.front() != '{')_THROW("syntax error");
 			charlist.pop_front();
 			if (charlist.front() != '}') {
 				do {
 					_TO_NEXT;
 					string name = parse_string(charlist);
 					_TO_NEXT;
-					if (charlist.front() != ':')throw new exception("syntax error");
+					if (charlist.front() != ':')_THROW("syntax error");
 					charlist.pop_front();
 					_TO_NEXT;
 					Json value(charlist);
 					_members[name] = value;
 					_TO_NEXT;
 					if (charlist.front() == '}') break;
-					if (charlist.front() != ',')throw new exception("syntax error");
+					if (charlist.front() != ',')_THROW("syntax error");
 					charlist.pop_front();
 				} while (1);
 			}
@@ -366,7 +366,7 @@ namespace maolib {
 		void Json::parse_array(list<char>& charlist)
 		{
 			_TO_NEXT;
-			if (charlist.front() != '[')throw new exception("syntax error");
+			if (charlist.front() != '[')_THROW("syntax error");
 			charlist.pop_front();
 			if (charlist.front() != ']') {
 				do {
@@ -375,7 +375,7 @@ namespace maolib {
 					_elements.push_back(value);
 					_TO_NEXT;
 					if (charlist.front() == ']') break;
-					if (charlist.front() != ',')throw new exception("syntax error");
+					if (charlist.front() != ',')_THROW("syntax error");
 					charlist.pop_front();
 				} while (1);
 			}
