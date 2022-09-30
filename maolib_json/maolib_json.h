@@ -30,7 +30,7 @@ namespace maolib {
 			static Json newObject();
 			static Json newArray();
 			inline J_TYPE getType();
-			inline string getJsonString();
+			string getJsonString();
 			void parse(string json);
 			Json& operator[](string key);
 			Json& operator[](size_t idx);
