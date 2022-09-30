@@ -3,7 +3,7 @@
 #include <vector>
 #include <map>
 #include <string>
-#include <exception>
+#include <iostream>
 using namespace std;
 #ifdef _WIN32
 #define _THROW_ERROR(msg) throw new exception(msg)
