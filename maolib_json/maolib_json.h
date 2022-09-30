@@ -3,6 +3,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <exception>
 using namespace std;
 #define _TO_NEXT trim_space(charlist); if (charlist.empty())throw new exception("syntax error");
 #define _TO_END trim_space(charlist); if (!charlist.empty())throw new exception("syntax error");
