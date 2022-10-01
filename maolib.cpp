@@ -6,7 +6,6 @@ using namespace maolib::time;
 int main(){
 	cout << "nihao chengdu" << endl;
 	cout << get_now_string() << endl;
-
 	Json a;
 	a.parse("[1,2,\"nihao\",{\"a\":\"\\nchengdu\\n\"},{\"name\":\"mao\",\"age\":46}]");
 	cout << a.getJsonString() << endl;
