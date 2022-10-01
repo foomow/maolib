@@ -7,7 +7,7 @@ int main(){
 	cout << "nihao chengdu" << endl;
 	cout << get_now_string() << endl;
 	Json a;
-	a.parse("[1,2,\"nihao\",{\"a\":\"chengdu\"},{\"name\":\"mao\",\"age\":46}]");
+	a.parse("[1,2,\"nihao\",{\"a\":\"\\nchengdu\\n\"},{\"name\":\"mao\",\"age\":46}]");
 	cout << a.getJsonString() << endl;
 	cout << a[2].getJsonString() << endl;
 	cout << a[3]["ag"].getJsonString() << endl;

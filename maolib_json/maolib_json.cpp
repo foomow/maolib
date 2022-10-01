@@ -284,6 +284,10 @@ namespace maolib {
 			case 'n':
 				_type = J_NULL;
 				_json_string = "null";
+				charlist.pop_front();
+				charlist.pop_front();
+				charlist.pop_front();
+				charlist.pop_front();
 				break;
 			case '0':
 			case '1':
@@ -317,7 +321,7 @@ namespace maolib {
 			charlist.pop_front();
 			string ret = "";
 			char last_char = '\0';
-			while (charlist.front() != '\"' && last_char != '\\') {
+			while (charlist.front() != '\"' || last_char == '\\') {
 				last_char = charlist.front();
 				ret += last_char;
 				charlist.pop_front();
