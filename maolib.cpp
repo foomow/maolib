@@ -4,6 +4,8 @@ using namespace maolib;
 using namespace maolib::json;
 using namespace maolib::time;
 int main(){
+	maolib::logger::init();
+	logger::debug("debug info");
 	cout << "nihao chengdu" << endl;
 	cout << get_now_string() << endl;
 	Json a;
@@ -26,4 +28,5 @@ int main(){
 	a.Insert(b,0);
 	cout << a.getJsonString() << endl;
 	cout << a.Size() << endl;
+	maolib::logger::dispose();
 }

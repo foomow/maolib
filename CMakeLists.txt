@@ -35,6 +35,16 @@ file(GLOB all_files
 	 ${project_file_types}
 )
 add_executable(${exe_name} ${all_files})
+
+
+if (WIN32)
+	target_link_libraries(${exe_name} ${all_lib})
+	target_compile_options(${exe_name} PUBLIC -wd4996 PUBLIC -wd4244)
+else()
+	find_package (Threads)
+	target_link_libraries (${exe_name} ${all_lib} Threads::Threads)
+endif()
+
 target_link_libraries(${exe_name} ${all_lib})
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
