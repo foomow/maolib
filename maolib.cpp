@@ -28,5 +28,8 @@ int main(){
 	a.Insert(b,0);
 	cout << a.getJsonString() << endl;
 	cout << a.Size() << endl;
+	OpenApiClient::OpenApiClient client;
+	client.Connect("api.localhost");
+
 	maolib::logger::dispose();
 }
