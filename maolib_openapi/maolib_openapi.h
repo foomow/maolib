@@ -19,21 +19,25 @@ namespace maolib
 			HEAD,
 			TRACE
 		};
+		
 		class OpenApiClient
 		{
 		public:
 			OpenApiClient();
 			~OpenApiClient();
-			bool Connect(string host);
+			bool Connect(string host,int port=80);
 			Json Request(REQUEST_METHOD method, string endpoint, Json *payload = nullptr);
-			void Request(REQUEST_METHOD method, string endpoint, Json *payload = nullptr, void (*callback)(Json) = nullptr);
+			std::thread* RequestSync(REQUEST_METHOD method, string endpoint, Json *payload = nullptr, void (*callback)(Json) = nullptr);
 			void Dispose();
 
 		private:
 			int _socket;
+			string _host;
+			int _port;
 			bool isConnected;
 			thread* pRecvThread;
 			void recvThread();
+			Json parseResponse(string response);
 		};
 	}
 }

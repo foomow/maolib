@@ -1,10 +1,14 @@
 #include "maolib_json.h"
-namespace maolib {
-	namespace json {
-		Json::Json() {
+namespace maolib
+{
+	namespace json
+	{
+		Json::Json()
+		{
 			init();
 		}
-		Json::Json(string json_str) {
+		Json::Json(string json_str)
+		{
 			init();
 			parse(json_str);
 		}
@@ -20,21 +24,25 @@ namespace maolib {
 		{
 			return _type;
 		}
-		string Json::getJsonString() {
+		string Json::getJsonString()
+		{
 			make_json_string();
 			if (_type == J_STRING)
 				return "\"" + _json_string + "\"";
 			else
 				return _json_string;
 		}
-		void Json::parse(string json) {
+		void Json::parse(string json)
+		{
 			list<char> charlist(json.begin(), json.end());
 			_TO_NEXT;
 			parse_value(charlist);
 			_TO_END;
 		}
-		Json& Json::operator[](string key) {
-			switch (_type) {
+		Json &Json::operator[](string key)
+		{
+			switch (_type)
+			{
 			case maolib::json::J_OBJECT:
 				return _members[key];
 				break;
@@ -43,8 +51,10 @@ namespace maolib {
 				break;
 			}
 		}
-		Json& Json::operator[](size_t idx) {
-			switch (_type) {
+		Json &Json::operator[](size_t idx)
+		{
+			switch (_type)
+			{
 			case J_ARRAY:
 				return _elements[idx];
 				break;
@@ -53,38 +63,45 @@ namespace maolib {
 				break;
 			}
 		}
-		void Json::operator=(string str) {
+		void Json::operator=(string str)
+		{
 			_type = J_STRING;
 			_json_string = str;
 			_elements.clear();
 			_members.clear();
 		}
-		void Json::operator=(int n) {
+		void Json::operator=(int n)
+		{
 			_type = J_NUMBER;
 			_json_string = to_string(n);
 			_elements.clear();
 			_members.clear();
 		}
-		void Json::operator=(long n) {
+		void Json::operator=(long n)
+		{
 			_type = J_NUMBER;
 			_json_string = to_string(n);
 			_elements.clear();
 			_members.clear();
 		}
-		void Json::operator=(long long n) {
+		void Json::operator=(long long n)
+		{
 			_type = J_NUMBER;
 			_json_string = to_string(n);
 			_elements.clear();
 			_members.clear();
 		}
-		void Json::operator=(double d) {
+		void Json::operator=(double d)
+		{
 			_type = J_NUMBER;
 			_json_string = to_string(d);
 			_elements.clear();
 			_members.clear();
 		}
-		string Json::toStdString() {
-			switch (_type) {
+		string Json::toStdString()
+		{
+			switch (_type)
+			{
 			case J_NUMBER:
 			case J_STRING:
 			case J_NULL:
@@ -96,8 +113,10 @@ namespace maolib {
 				break;
 			}
 		}
-		int Json::toInt() {
-			switch (_type) {
+		int Json::toInt()
+		{
+			switch (_type)
+			{
 			case J_NUMBER:
 			case J_STRING:
 				return stoi(_json_string);
@@ -107,8 +126,10 @@ namespace maolib {
 				break;
 			}
 		}
-		double Json::toDouble() {
-			switch (_type) {
+		double Json::toDouble()
+		{
+			switch (_type)
+			{
 			case J_NUMBER:
 			case J_STRING:
 				return stod(_json_string);
@@ -118,8 +139,10 @@ namespace maolib {
 				break;
 			}
 		}
-		long Json::toLong() {
-			switch (_type) {
+		long Json::toLong()
+		{
+			switch (_type)
+			{
 			case J_NUMBER:
 			case J_STRING:
 				return stol(_json_string);
@@ -129,8 +152,10 @@ namespace maolib {
 				break;
 			}
 		}
-		long long Json::toLLong() {
-			switch (_type) {
+		long long Json::toLLong()
+		{
+			switch (_type)
+			{
 			case J_NUMBER:
 			case J_STRING:
 				return stoll(_json_string);
@@ -140,21 +165,26 @@ namespace maolib {
 				break;
 			}
 		}
-		size_t Json::Append(Json& json) {
-			switch (_type) {
+		size_t Json::Append(Json &json)
+		{
+			switch (_type)
+			{
 			case J_ARRAY:
 				_elements.push_back(json);
-				return _elements.size();;
+				return _elements.size();
+				;
 				break;
 			default:
 				_THROW_ERROR("invalid operation");
 				break;
 			}
 		}
-		size_t Json::Insert(Json& json, size_t idx)
+		size_t Json::Insert(Json &json, size_t idx)
 		{
-			if (_elements.size() > idx) {
-				switch (_type) {
+			if (_elements.size() > idx)
+			{
+				switch (_type)
+				{
 				case J_ARRAY:
 					_elements.insert(_elements.begin() + idx, json);
 					return _elements.size();
@@ -166,8 +196,10 @@ namespace maolib {
 			}
 			_THROW_ERROR("invalid operation");
 		}
-		void Json::Remove(string key) {
-			switch (_type) {
+		void Json::Remove(string key)
+		{
+			switch (_type)
+			{
 			case J_OBJECT:
 				_members.erase(key);
 				return;
@@ -177,9 +209,12 @@ namespace maolib {
 				break;
 			}
 		}
-		void Json::Remove(size_t idx) {
-			if (_elements.size() > idx) {
-				switch (_type) {
+		void Json::Remove(size_t idx)
+		{
+			if (_elements.size() > idx)
+			{
+				switch (_type)
+				{
 				case J_ARRAY:
 					_elements.erase(_elements.begin() + idx, _elements.begin() + idx + 1);
 					return;
@@ -190,8 +225,10 @@ namespace maolib {
 				}
 			}
 		}
-		void Json::Clear() {
-			switch (_type) {
+		void Json::Clear()
+		{
+			switch (_type)
+			{
 			case J_ARRAY:
 				_elements.clear();
 				return;
@@ -207,7 +244,8 @@ namespace maolib {
 		}
 		size_t Json::Size()
 		{
-			switch (_type) {
+			switch (_type)
+			{
 			case J_ARRAY:
 				return _elements.size();
 				break;
@@ -222,51 +260,64 @@ namespace maolib {
 				break;
 			}
 		}
-		Json::Json(list<char>& charlist) {
+		Json::Json(list<char> &charlist)
+		{
 			init();
 			_TO_NEXT;
 			parse_value(charlist);
 		}
-		void Json::init() {
+		void Json::init()
+		{
 			_type = J_NULL;
 			_json_string = "null";
 			_elements.clear();
 			_members.clear();
 		}
-		void Json::trim_space(list<char>& charlist) {
+		void Json::trim_space(list<char> &charlist)
+		{
 			list<char>::iterator it = charlist.begin();
-			while (it != charlist.end()) {
-				if (*it != ' ' && *it != '\r' && *it != '\n' && *it != '\t') break;
+			while (it != charlist.end())
+			{
+				if (*it != ' ' && *it != '\r' && *it != '\n' && *it != '\t')
+					break;
 				it++;
 				charlist.pop_front();
 			}
 		}
-		void Json::make_json_string() {
-			switch (_type) {
+		void Json::make_json_string()
+		{
+			switch (_type)
+			{
 			case J_INVALID:
 				_json_string = "";
 				break;
 			case J_OBJECT:
 				_json_string = "{";
-				if (_members.size() > 0) {
-					for (pair<string, Json> nv : _members) {
+				if (_members.size() > 0)
+				{
+					for (pair<string, Json> nv : _members)
+					{
 						_json_string += "\"" + nv.first + "\":" + nv.second.getJsonString() + ",";
 					}
 					*(_json_string.end() - 1) = '}';
 				}
-				else {
+				else
+				{
 					_json_string += "}";
 				}
 				break;
 			case J_ARRAY:
 				_json_string = "[";
-				if (_elements.size() > 0) {
-					for (Json v : _elements) {
+				if (_elements.size() > 0)
+				{
+					for (Json v : _elements)
+					{
 						_json_string += v.getJsonString() + ",";
 					}
 					*(_json_string.end() - 1) = ']';
 				}
-				else {
+				else
+				{
 					_json_string += "]";
 				}
 				break;
@@ -274,9 +325,11 @@ namespace maolib {
 				break;
 			}
 		}
-		void Json::parse_value(list<char>& charlist) {
+		void Json::parse_value(list<char> &charlist)
+		{
 			_TO_NEXT;
-			switch (charlist.front()) {
+			switch (charlist.front())
+			{
 			case '\"':
 				_type = J_STRING;
 				_json_string = parse_string(charlist);
@@ -299,6 +352,8 @@ namespace maolib {
 			case '7':
 			case '8':
 			case '9':
+			case '-':
+			case '+':
 				_type = J_NUMBER;
 				_json_string = parse_number(charlist);
 				break;
@@ -315,29 +370,48 @@ namespace maolib {
 				break;
 			}
 		}
-		string Json::parse_string(list<char>& charlist) {
+		string Json::parse_string(list<char> &charlist)
+		{
 			_TO_NEXT;
-			if (charlist.front() != '\"')_THROW_ERROR("syntax error");
+			if (charlist.front() != '\"')
+				_THROW_ERROR("syntax error");
 			charlist.pop_front();
 			string ret = "";
 			char last_char = '\0';
-			while (charlist.front() != '\"' || last_char == '\\') {
+			while (charlist.front() != '\"' || last_char == '\\')
+			{
 				last_char = charlist.front();
 				ret += last_char;
 				charlist.pop_front();
-				if (charlist.empty())_THROW_ERROR("syntax error");
+				if (charlist.empty())
+					_THROW_ERROR("syntax error");
 			}
 			charlist.pop_front();
 			return ret;
 		}
-		string Json::parse_number(list<char>& charlist) {
+		string Json::parse_number(list<char> &charlist)
+		{
 			_TO_NEXT;
-			if (charlist.front() < '0' || charlist.front() > '9')_THROW_ERROR("syntax error");
 			string ret = "";
+			if (charlist.front() == '-')
+			{
+				ret = "-";
+				charlist.pop_front();
+			}
+			else if (charlist.front() == '+')
+			{
+				charlist.pop_front();
+			}
+			_TO_NEXT;
+			if (charlist.front() < '0' || charlist.front() > '9')
+				_THROW_ERROR("syntax error");
 			bool hasdot = false;
-			do {
-				if (charlist.front() == '.') {
-					if (hasdot)_THROW_ERROR("syntax error");
+			do
+			{
+				if (charlist.front() == '.')
+				{
+					if (hasdot)
+						_THROW_ERROR("syntax error");
 					hasdot = true;
 				}
 				ret += charlist.front();
@@ -345,42 +419,53 @@ namespace maolib {
 			} while ((charlist.front() >= '0' && charlist.front() <= '9') || charlist.front() == '.');
 			return ret;
 		}
-		void Json::parse_object(list<char>& charlist)
+		void Json::parse_object(list<char> &charlist)
 		{
 			_TO_NEXT;
-			if (charlist.front() != '{')_THROW_ERROR("syntax error");
+			if (charlist.front() != '{')
+				_THROW_ERROR("syntax error");
 			charlist.pop_front();
-			if (charlist.front() != '}') {
-				do {
+			if (charlist.front() != '}')
+			{
+				do
+				{
 					_TO_NEXT;
 					string name = parse_string(charlist);
 					_TO_NEXT;
-					if (charlist.front() != ':')_THROW_ERROR("syntax error");
+					if (charlist.front() != ':')
+						_THROW_ERROR("syntax error");
 					charlist.pop_front();
 					_TO_NEXT;
 					Json value(charlist);
 					_members[name] = value;
 					_TO_NEXT;
-					if (charlist.front() == '}') break;
-					if (charlist.front() != ',')_THROW_ERROR("syntax error");
+					if (charlist.front() == '}')
+						break;
+					if (charlist.front() != ',')
+						_THROW_ERROR("syntax error");
 					charlist.pop_front();
 				} while (1);
 			}
 			charlist.pop_front();
 		}
-		void Json::parse_array(list<char>& charlist)
+		void Json::parse_array(list<char> &charlist)
 		{
 			_TO_NEXT;
-			if (charlist.front() != '[')_THROW_ERROR("syntax error");
+			if (charlist.front() != '[')
+				_THROW_ERROR("syntax error");
 			charlist.pop_front();
-			if (charlist.front() != ']') {
-				do {
+			if (charlist.front() != ']')
+			{
+				do
+				{
 					_TO_NEXT;
 					Json value(charlist);
 					_elements.push_back(value);
 					_TO_NEXT;
-					if (charlist.front() == ']') break;
-					if (charlist.front() != ',')_THROW_ERROR("syntax error");
+					if (charlist.front() == ']')
+						break;
+					if (charlist.front() != ',')
+						_THROW_ERROR("syntax error");
 					charlist.pop_front();
 				} while (1);
 			}
