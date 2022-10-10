@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <iostream>
 #include <thread>
+#include <mutex>
 #include "../maolib_json/maolib_json.h"
 using namespace std;
 using namespace maolib::json;
@@ -38,6 +39,7 @@ namespace maolib
 			thread* pRecvThread;
 			void recvThread();
 			Json parseResponse(string response);
+			std::mutex requestLock;
 		};
 	}
 }

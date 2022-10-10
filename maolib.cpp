@@ -36,7 +36,7 @@ int main()
 
 	std::vector<std::thread*> pool;
 	maolib::logger::debug("begin sent");
-	for (int i = 0; i < 60; i++)
+	for (int i = 0; i < 120; i++)
 	{
 		std::thread* x = client.RequestSync(OpenApiClient::GET, "/WeatherForecast", nullptr, [](Json reponse)
 									{
@@ -44,7 +44,6 @@ int main()
 									});
 									pool.push_back(x);
 		maolib::logger::debug("request sent");
-		this_thread::sleep_for(chrono::milliseconds(10));
 	}	
 	maolib::logger::debug("finish sent");
 	for(auto x:pool){

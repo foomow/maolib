@@ -87,9 +87,11 @@ namespace maolib
 		}
 		Json OpenApiClient::Request(REQUEST_METHOD method, string endpoint, Json *payload)
 		{
+			requestLock.lock();
 			if (!isConnected)
 			{
 				logger::error("socket didn't connect to server");
+				requestLock.unlock();
 				return Json();
 			};
 			string requestPayload = METHOD_STR[method];
@@ -116,6 +118,7 @@ namespace maolib
 			if (send(_socket, requestPayload.c_str(), strlen(requestPayload.c_str()), 0) < 0)
 			{
 				logger::error("Send failed");
+				requestLock.unlock();
 				return Json();
 			}
 
@@ -130,12 +133,12 @@ namespace maolib
 					break;
 
 			} while (recvLen > 0);
-
+			requestLock.unlock();
 			return parseResponse(response);
 		}
 		std::thread* OpenApiClient::RequestSync(REQUEST_METHOD method, string endpoint, Json *payload, void (*callback)(Json))
 		{
-			return new std::thread([=](){
+			return new std::thread([=](){			
 				Json response=Request(method, endpoint, payload);
 				(*callback)(response);
 			});
@@ -156,7 +159,7 @@ namespace maolib
 				return Json();
 			}
 			string chunks = response.substr(response.find("\r\n\r\n") + 4);
-			logger::debug(line);
+			//logger::debug(line);
 			int chunkLen = 0;
 			string json = "";
 			do
