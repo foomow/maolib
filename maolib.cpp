@@ -31,22 +31,24 @@ int main()
 	cout << a.Size() << endl;
 	OpenApiClient::OpenApiClient client;
 	client.Connect("api.localhost");
-	Json reponse = client.Request(OpenApiClient::GET, "/WeatherForecast");
+	Json payload("\"111\"");
+	Json reponse = client.Request(OpenApiClient::GET, "/WeatherForecast",&payload);
 	maolib::logger::info(reponse.getJsonString());
 
-	std::vector<std::thread*> pool;
+	std::vector<std::thread *> pool;
 	maolib::logger::debug("begin sent");
 	for (int i = 0; i < 120; i++)
 	{
-		std::thread* x = client.RequestSync(OpenApiClient::GET, "/WeatherForecast", nullptr, [](Json reponse)
-									{
-										 maolib::logger::info(reponse.getJsonString()); 
-									});
-									pool.push_back(x);
+		std::thread *x = client.RequestSync(OpenApiClient::GET, "/WeatherForecast", &payload, [](Json reponse)
+											{ 
+												maolib::logger::info(reponse.getJsonString()); 
+												});
+		pool.push_back(x);
 		maolib::logger::debug("request sent");
-	}	
+	}
 	maolib::logger::debug("finish sent");
-	for(auto x:pool){
+	for (auto x : pool)
+	{
 		x->join();
 	}
 	maolib::logger::debug("finish request");
