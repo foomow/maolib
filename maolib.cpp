@@ -32,25 +32,21 @@ int main()
 	OpenApiClient::OpenApiClient client;
 	client.Connect("api.localhost");
 	Json payload("\"111\"");
-	Json reponse = client.Request(OpenApiClient::GET, "/WeatherForecast",&payload);
+	Json reponse = client.Request(OpenApiClient::GET, "/WeatherForecast", &payload);
 	maolib::logger::info(reponse.getJsonString());
 
-	std::vector<std::thread *> pool;
-	maolib::logger::debug("begin sent");
-	for (int i = 0; i < 120; i++)
-	{
-		std::thread *x = client.RequestSync(OpenApiClient::GET, "/WeatherForecast", &payload, [](Json reponse)
-											{ 
-												maolib::logger::info(reponse.getJsonString()); 
-												});
-		pool.push_back(x);
-		maolib::logger::debug("request sent");
-	}
-	maolib::logger::debug("finish sent");
-	for (auto x : pool)
-	{
-		x->join();
-	}
-	maolib::logger::debug("finish request");
+	std::thread *x = client.RequestSync(OpenApiClient::GET, "/WeatherForecast", &payload, [](Json reponse)
+										{ maolib::logger::info(reponse.getJsonString()); });
+	x->join();
+
+	maolib::redis::redis_client redis_client("172.20.0.3");
+	redis_client.Connect();
+	maolib::json::Json res=redis_client.ExcuteCommand("set test 'nihao chengdu. im \"mao\"'");
+	maolib::logger::info(res.getJsonString());
+	res=redis_client.ExcuteCommand("keys *");
+	maolib::logger::info(res.getJsonString());
+	res=redis_client.ExcuteCommand("get test");
+	maolib::logger::info(res.getJsonString());
+
 	maolib::logger::dispose();
 }

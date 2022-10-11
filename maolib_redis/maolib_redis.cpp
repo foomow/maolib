@@ -5,10 +5,10 @@ namespace maolib
 {
     namespace redis
     {
-        RedisClient::RedisClient(string host, int port) : host_(host), port_(port), IsConnected(false), socket_desc_(-1),requestlock(new std::mutex())
+        redis_client::redis_client(string host, int port) : host_(host), port_(port), IsConnected(false), socket_desc_(-1), requestlock(new std::mutex())
         {
         }
-        bool RedisClient::Connect()
+        bool redis_client::Connect()
         {
             if (IsConnected)
             {
@@ -38,7 +38,7 @@ namespace maolib
             logger::info("Connected");
             return true;
         }
-        bool RedisClient::Close()
+        bool redis_client::Close()
         {
             if (!IsConnected)
             {
@@ -49,7 +49,7 @@ namespace maolib
             IsConnected = false;
             return true;
         }
-        maolib::json::Json RedisClient::ExcuteCommand(string cmd)
+        maolib::json::Json redis_client::ExcuteCommand(string cmd)
         {
             requestlock->lock();
             if (!IsConnected)
@@ -58,9 +58,54 @@ namespace maolib
                 requestlock->unlock();
                 return maolib::json::Json();
             }
-            std::istringstream stream(cmd);
-            std::vector<std::string> segs((std::istream_iterator<std::string>(stream)),
-                                          std::istream_iterator<std::string>());
+            std::vector<std::string> segs;
+            string seg_str = "";
+            char quote = 0;
+            for (char ch : cmd)
+            {
+                if (quote == 0)
+                {
+                    if (ch == ' ')
+                    {
+                        if (seg_str != "")
+                        {
+                            segs.push_back(seg_str);
+                            seg_str = "";
+                        }
+                    }
+                    else
+                    {
+                        if (ch == '\'' || ch == '\"')
+                        {
+                            quote = ch;
+                        }
+                        else
+                        {
+                            seg_str.push_back(ch);
+                        }
+                    }
+                }
+                else
+                {
+                    if (ch == quote)
+                    {
+                        if (seg_str != "")
+                        {
+                            segs.push_back(seg_str);
+                            seg_str = "";
+                        }
+                        quote = 0;
+                    }
+                    else
+                    {
+                        seg_str.push_back(ch);
+                    }
+                }
+            }
+            if (seg_str != "")
+            {
+                segs.push_back(seg_str);
+            }
             int seg_count = 0;
             string message = "";
             for (string seg : segs)
@@ -80,12 +125,12 @@ namespace maolib
                 return maolib::json::Json();
             }
             logger::debug("sent");
-            maolib::json::Json ret=receiveJson();
+            maolib::json::Json ret = receiveJson();
             requestlock->unlock();
             return ret;
         }
 
-        maolib::json::Json RedisClient::receiveJson()
+        maolib::json::Json redis_client::receiveJson()
         {
             char type;
             if (recv(socket_desc_, &type, 1, 0) != 1)
@@ -113,7 +158,7 @@ namespace maolib
             }
             return maolib::json::Json();
         }
-        maolib::json::Json RedisClient::receiveSimpleString()
+        maolib::json::Json redis_client::receiveSimpleString()
         {
             char recvBuff[1];
             int recvLen = 0;
@@ -122,7 +167,7 @@ namespace maolib
             {
                 recv(socket_desc_, recvBuff, 1, 0);
                 response.append(recvBuff, 1);
-                recvLen=response.size();
+                recvLen = response.size();
                 if (recvLen > 2 && response[recvLen - 1] == '\n' && response[recvLen - 2] == '\r')
                 {
                     response = response.substr(0, response.size() - 2);
@@ -131,7 +176,7 @@ namespace maolib
             } while (recvLen > 0);
             return maolib::json::Json("\"" + response + "\"");
         }
-        maolib::json::Json RedisClient::receiveErrors()
+        maolib::json::Json redis_client::receiveErrors()
         {
             char recvBuff[1];
             int recvLen = 0;
@@ -140,7 +185,7 @@ namespace maolib
             {
                 recv(socket_desc_, recvBuff, 1, 0);
                 response.append(recvBuff, 1);
-                recvLen=response.size();
+                recvLen = response.size();
                 if (recvLen > 2 && response[recvLen - 1] == '\n' && response[recvLen - 2] == '\r')
                 {
                     response = response.substr(0, response.size() - 2);
@@ -149,7 +194,7 @@ namespace maolib
             } while (recvLen > 0);
             return maolib::json::Json("\"" + response + "\"");
         }
-        maolib::json::Json RedisClient::receiveIntegers()
+        maolib::json::Json redis_client::receiveIntegers()
         {
             char recvBuff[1];
             int recvLen = 0;
@@ -158,7 +203,7 @@ namespace maolib
             {
                 recv(socket_desc_, recvBuff, 1, 0);
                 response.append(recvBuff, 1);
-                recvLen=response.size();
+                recvLen = response.size();
                 if (recvLen > 2 && response[recvLen - 1] == '\n' && response[recvLen - 2] == '\r')
                 {
                     response = response.substr(0, response.size() - 2);
@@ -167,11 +212,11 @@ namespace maolib
             } while (recvLen > 0);
             return maolib::json::Json(response);
         }
-        maolib::json::Json RedisClient::receiveBulkString()
+        maolib::json::Json redis_client::receiveBulkString()
         {
             char recvBuff[1024];
             int recvLen = 0;
-            int strLen=0;
+            int strLen = 0;
             string response = "";
             do
             {
@@ -187,7 +232,7 @@ namespace maolib
                     }
                     else
                     {
-                        strLen=stoi(len_str)+2;
+                        strLen = stoi(len_str) + 2;
                         break;
                     }
                 }
@@ -195,18 +240,20 @@ namespace maolib
             response = "";
             do
             {
-                recvLen = recv(socket_desc_, recvBuff, strLen>1024?1024:strLen, 0);
+                recvLen = recv(socket_desc_, recvBuff, strLen > 1024 ? 1024 : strLen, 0);
                 response.append(recvBuff, recvLen);
-                strLen-=recvLen;
-                if (strLen==0)
+                strLen -= recvLen;
+                if (strLen == 0)
                 {
                     response = response.substr(0, response.size() - 2);
                     break;
                 }
             } while (recvLen > 0);
+            response=replaceAll(response,"\\","\\\\");
+            response=replaceAll(response,"\"","\\\"");
             return maolib::json::Json("\"" + response + "\"");
         }
-        maolib::json::Json RedisClient::receiveArray()
+        maolib::json::Json redis_client::receiveArray()
         {
             char recvBuff[1];
             int recvLen = 0;
@@ -235,10 +282,25 @@ namespace maolib
             json::Json ret = json::Json("[]");
             for (int i = 0; i < array_size; i++)
             {
-                json::Json el=receiveJson();
+                json::Json el = receiveJson();
                 ret.Append(el);
             }
             return ret;
         }
+        std::string redis_client::replaceAll(std::string str,
+                                         const std::string &replace,
+                                         const std::string &with)
+            {
+                if (!replace.empty())
+                {
+                    std::size_t pos = 0;
+                    while ((pos = str.find(replace, pos)) != std::string::npos)
+                    {
+                        str.replace(pos, replace.length(), with);
+                        pos += with.length();
+                    }
+                }
+                return str;
+            }
     }
 }
