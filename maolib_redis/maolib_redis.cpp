@@ -174,6 +174,8 @@ namespace maolib
                     break;
                 }
             } while (recvLen > 0);
+            response=replaceAll(response,"\\","\\\\");
+            response=replaceAll(response,"\"","\\\"");
             return maolib::json::Json("\"" + response + "\"");
         }
         maolib::json::Json redis_client::receiveErrors()
@@ -192,6 +194,8 @@ namespace maolib
                     break;
                 }
             } while (recvLen > 0);
+            response=replaceAll(response,"\\","\\\\");
+            response=replaceAll(response,"\"","\\\"");
             return maolib::json::Json("\"" + response + "\"");
         }
         maolib::json::Json redis_client::receiveIntegers()
