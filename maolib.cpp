@@ -3,9 +3,30 @@ using namespace std;
 using namespace maolib;
 using namespace maolib::json;
 using namespace maolib::time;
+
+struct test_type
+{
+	int n;
+	std::string s;
+	vector<int> il;
+	vector<string> sl;
+	long x;
+};
+SETUP_DESERIALIZER(test_type, n, s, il, sl, x)
+struct test_type1
+{
+	int n;
+	std::string s;
+	vector<int> il;
+	vector<string> sl;
+	long x;
+};
 int main()
 {
 	maolib::logger::init();
+	Json j("{\"n\":1,\"s\":\"nihao chengdu\",\"il\":[1,2,3,4,5,6],\"sl\":[\"sss\",\"ttt\"],\"x\":8768}");
+	test_type je;
+	DESERIALIZE(test_type, j, &je);
 	logger::debug("debug info");
 	cout << "nihao chengdu" << endl;
 	cout << get_now_string() << endl;
@@ -41,11 +62,11 @@ int main()
 
 	maolib::redis::redis_client redis_client("172.20.0.3");
 	redis_client.Connect();
-	maolib::json::Json res=redis_client.ExcuteCommand("set test 'nihao chengdu. im \"mao\"'");
+	maolib::json::Json res = redis_client.ExcuteCommand("set test 'nihao chengdu. im \"mao\"'");
 	maolib::logger::info(res.getJsonString());
-	res=redis_client.ExcuteCommand("keys *");
+	res = redis_client.ExcuteCommand("keys *");
 	maolib::logger::info(res.getJsonString());
-	res=redis_client.ExcuteCommand("get test");
+	res = redis_client.ExcuteCommand("get test");
 	maolib::logger::info(res.getJsonString());
 
 	maolib::logger::dispose();

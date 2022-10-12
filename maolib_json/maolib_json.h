@@ -41,7 +41,7 @@ namespace maolib {
 			void operator=(double d);
 			string toStdString();
 			int toInt();
-			inline double toDouble();
+			double toDouble();
 			long toLong();
 			long long toLLong();
 			size_t Append(Json &json);
