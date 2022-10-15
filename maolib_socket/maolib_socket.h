@@ -11,7 +11,7 @@ namespace maolib
 	{
 		int connect(string host, int port=80);
 		int send(int socket_fd, string);
-		int recv(int socket_fd, void* buff, size_t len, int flag=0);
+		int recv(int socket_fd, char* buff, size_t len, int flag=0);
 		int close_socket(int socket_fd);
 	}
 }

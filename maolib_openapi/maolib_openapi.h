@@ -38,7 +38,7 @@ namespace maolib
 			bool isConnected;
 			thread* pRecvThread;
 			void recvThread();
-			Json parseResponse(string response);
+			Json parseChunkedResponse(string response);
 			std::mutex requestLock;
 		};
 	}

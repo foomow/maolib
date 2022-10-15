@@ -53,7 +53,7 @@ namespace maolib
 		{
 			return ::send(socket_fd, requestPayload.c_str(), strlen(requestPayload.c_str()), 0);
 		}
-		int recv(int socket_fd, void* buff, size_t len, int flag)
+		int recv(int socket_fd, char* buff, size_t len, int flag)
 		{
 			return ::recv(socket_fd, buff, len, flag);
 		}

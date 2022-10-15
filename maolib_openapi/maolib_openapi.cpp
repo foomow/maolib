@@ -1,6 +1,7 @@
 ﻿#include "maolib_openapi.h"
 #include "../maolib_logger/maolib_logger.h"
 #include "../maolib_socket/maolib_socket.h"
+#define BUFFLEN 4096
 using namespace maolib::client_socket;
 namespace maolib
 {
@@ -91,39 +92,70 @@ namespace maolib
 			}
 
 			string response = "";
-			char recvBuff[4096];
+			char recvBuff[BUFFLEN];
 			int recvLen = 0;
 			do
 			{
-				recvLen = recv(_socket, recvBuff, 4096);
-				response.append(recvBuff, recvLen);
-				if (response.find("\r\n\r\n") >= 0) {
-					int linepos = 0;
-					do {
-						int endpos = response.find("\r\n",linepos) + 2;
-						string line = response.substr(linepos, endpos-linepos);
-						if (line._Starts_with("Content-Length")) {
-							string len = line.substr(line.find(":") + 1);
-							int length = stoi(len);
-						}
-						linepos = endpos ;
-					} while (linepos>=0);
-				}
-				if (recvLen > 4 && recvBuff[recvLen - 1] == '\n' && recvBuff[recvLen - 2] == '\r' && recvBuff[recvLen - 3] == '\n' && recvBuff[recvLen - 4] == '\r')
-					break;
+				recvLen = recv(_socket, recvBuff, BUFFLEN);
+				if (recvLen > 0)
+				{
+					bool isFinished = (recvLen > 4 && recvBuff[recvLen - 1] == '\n' && recvBuff[recvLen - 2] == '\r' && recvBuff[recvLen - 3] == '\n' && recvBuff[recvLen - 4] == '\r');
+					response.append(recvBuff, recvLen);
+					if (response.find("\r\n\r\n") >= 0)
+					{
+						int linepos = 0;
+						do
+						{
+							int endpos = response.find("\r\n", linepos) + 2;
+							string line = response.substr(linepos, endpos - linepos);
+							if (line == "Transfer-Encoding: chunked\r\n")
+							{
+								if (!isFinished)
+								{
+									do
+									{
+										recvLen = recv(_socket, recvBuff, BUFFLEN);
+										response.append(recvBuff, recvLen);
+										if (recvLen > 4 && recvBuff[recvLen - 1] == '\n' && recvBuff[recvLen - 2] == '\r' && recvBuff[recvLen - 3] == '\n' && recvBuff[recvLen - 4] == '\r')
+											break;
 
+									} while (recvLen > 0);
+								}
+								requestLock.unlock();
+								return parseChunkedResponse(response);
+							}
+							if (line.substr(0,16) == "Content-Length:")
+							{
+								if (!isFinished)
+								{
+									do
+									{
+										recvLen = recv(_socket, recvBuff, BUFFLEN);
+										response.append(recvBuff, recvLen);
+										if (recvLen > 4 && recvBuff[recvLen - 1] == '\n' && recvBuff[recvLen - 2] == '\r' && recvBuff[recvLen - 3] == '\n' && recvBuff[recvLen - 4] == '\r')
+											break;
+
+									} while (recvLen > 0);
+								}
+								requestLock.unlock();
+								return parseChunkedResponse(response);
+							}
+							linepos = endpos;
+						} while (linepos >= 0);
+					}
+				}
 			} while (recvLen > 0);
 			requestLock.unlock();
-			return parseResponse(response);
+			return Json();
 		}
-		std::thread* OpenApiClient::RequestSync(REQUEST_METHOD method, string endpoint, Json *payload, void (*callback)(Json))
+		std::thread *OpenApiClient::RequestSync(REQUEST_METHOD method, string endpoint, Json *payload, void (*callback)(Json))
 		{
-			return new std::thread([=](){			
+			return new std::thread([=]()
+								   {			
 				Json response=Request(method, endpoint, payload);
-				(*callback)(response);
-			});
+				(*callback)(response); });
 		}
-		Json OpenApiClient::parseResponse(string response)
+		Json OpenApiClient::parseChunkedResponse(string response)
 		{
 			string line = response.substr(0, response.find("\r\n") + 1);
 			if (line.size() == 0 || line.find(' ') < 0)
@@ -139,7 +171,7 @@ namespace maolib
 				return Json();
 			}
 			string chunks = response.substr(response.find("\r\n\r\n") + 4);
-			//logger::debug(line);
+			// logger::debug(line);
 			int chunkLen = 0;
 			string json = "";
 			do
@@ -147,7 +179,7 @@ namespace maolib
 				line = chunks.substr(0, chunks.find("\r\n"));
 				chunkLen = stoi(line, 0, 16);
 				json += chunks.substr(chunks.find("\r\n") + 2, chunkLen);
-				chunks = chunks.substr(chunks.find("\r\n")  + chunkLen+ 4);
+				chunks = chunks.substr(chunks.find("\r\n") + chunkLen + 4);
 			} while (chunkLen != 0);
 			return Json(json);
 		}
