@@ -32,7 +32,7 @@ namespace maolib
                 logger::error("client is disconnected");
                 return false;
             }
-            close(socket_desc_);
+            maolib::client_socket::close_socket(socket_desc_);
             IsConnected = false;
             return true;
         }
