@@ -78,9 +78,9 @@ namespace maolib
 			}
 			return iResult;
 		}
-		int recv(int socket_fd, void* buff, size_t len, int flag)
+		int recv(int socket_fd, char* buff, size_t len, int flag)
 		{
-			return ::recv(socket_fd, (char*)buff, len, flag);
+			return ::recv(socket_fd, buff, len, flag);
 		}
 		int close_socket(int socket_fd)
 		{

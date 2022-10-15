@@ -75,9 +75,9 @@ int main()
 	Json reponse = client.Request(openapi::GET, "/api/Tourist?page=1", &payload);
 	maolib::logger::info(reponse.getJsonString());
 
-	/*std::thread* x = client.RequestSync(openapi::GET, "/api/Tourist?page=1", &payload, [](Json reponse)
+	std::thread* x = client.RequestSync(openapi::GET, "/api/Tourist?page=1", &payload, [](Json reponse)
 		{ maolib::logger::info(reponse.getJsonString()); });
-	x->join();*/
+	x->join();
 #endif // DEBUG
 
 	maolib::logger::dispose();
