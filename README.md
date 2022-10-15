@@ -11,7 +11,7 @@ This my personal c++ lib what is accumulated at my work.
 
 - maolib_redis is redis client without any other 3rd party dependency lib.
 
-- maolib_socket is a cross platform encapsulation of socket.
+- maolib_socket is a cross platform encapsulation of socket for send/receive std::string.
 
 - maolib_time implements 2 functions to make timestamp value and standard formatted time string for NOW.
 

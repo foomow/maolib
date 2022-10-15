@@ -126,7 +126,7 @@ namespace maolib
 									} while (recvLen > 0);
 								}
 								requestLock.unlock();
-								string chunks = response.substr(response.find("\r\n\r\n") + 4);
+								string chunks = response.substr(response.find("\r\n\r\n") + 4);//skip header
 								int chunkLen = 0;
 								string content = "";
 								do {
@@ -138,13 +138,13 @@ namespace maolib
 								return Json(content);
 							}
 							if (line.substr(0, 15) == "Content-Length:") {
-								requestLock.unlock();
 								int len = stoi(line.substr(16));
 								string content= response.substr(response.find("\r\n\r\n") + 4);
 								while (content.length() != len) {
 									recvLen = recv(_socket, recvBuff, BUFFLEN);
 									content.append(recvBuff, recvLen);
 								}
+								requestLock.unlock();
 								return Json(content);
 							}
 							linepos = endpos;
