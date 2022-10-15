@@ -7,7 +7,7 @@ using namespace std;
 using namespace maolib::json;
 namespace maolib
 {
-	namespace OpenApiClient
+	namespace openapi
 	{
 		enum REQUEST_METHOD
 		{

@@ -1,13 +1,12 @@
 ﻿#include "maolib_openapi.h"
 #include "../maolib_logger/maolib_logger.h"
-#include <sys/socket.h>
+#include "../maolib_socket/maolib_socket.h"
 #include <string.h>
 #include <unistd.h>
-#include <arpa/inet.h>
-#include <netdb.h>
+using namespace maolib::socket;
 namespace maolib
 {
-	namespace OpenApiClient
+	namespace openapi
 	{
 		const char *METHOD_STR[8] = {
 			"POST",
@@ -29,7 +28,7 @@ namespace maolib
 		{
 			if (isConnected)
 			{
-				close(_socket);
+				close_socket(_socket);
 			}
 
 			isConnected = false;
@@ -38,11 +37,11 @@ namespace maolib
 		{
 			if (isConnected)
 			{
-				close(_socket);
+				close_socket(_socket);
 			}
 
 			isConnected = false;
-			_socket = socket(AF_INET, SOCK_STREAM, 0);
+			_socket = socket::connect(host, port);
 
 			if (_socket == -1)
 			{
@@ -50,35 +49,6 @@ namespace maolib
 				return false;
 			}
 
-			struct sockaddr_in server;
-
-			struct hostent *he;
-			struct in_addr **addr_list;
-
-			if ((he = gethostbyname(host.c_str())) == NULL)
-			{
-				logger::error("gethostbyname");
-				return false;
-			}
-
-			addr_list = (struct in_addr **)he->h_addr_list;
-			char ip[17];
-			for (int i = 0; addr_list[i] != NULL; i++)
-			{
-				strcpy(ip, inet_ntoa(*addr_list[i]));
-				break;
-				;
-			}
-
-			server.sin_addr.s_addr = inet_addr(ip);
-			server.sin_family = AF_INET;
-			server.sin_port = htons(port);
-
-			if (connect(_socket, (struct sockaddr *)&server, sizeof(server)) < 0)
-			{
-				logger::error("connect error");
-				return false;
-			}
 			_host = host;
 			_port = port;
 			logger::info("Connected");
@@ -115,7 +85,7 @@ namespace maolib
 			}
 			requestPayload += "\r\n\r\n";
 
-			if (send(_socket, requestPayload.c_str(), strlen(requestPayload.c_str()), 0) < 0)
+			if (send(_socket, requestPayload) < 0)
 			{
 				logger::error("Send failed");
 				requestLock.unlock();
@@ -127,7 +97,7 @@ namespace maolib
 			int recvLen = 0;
 			do
 			{
-				recvLen = recv(_socket, recvBuff, 4096, 0);
+				recvLen = recv(_socket, recvBuff, 4096);
 				response.append(recvBuff, recvLen);
 				if (recvLen > 4 && recvBuff[recvLen - 1] == '\n' && recvBuff[recvLen - 2] == '\r' && recvBuff[recvLen - 3] == '\n' && recvBuff[recvLen - 4] == '\r')
 					break;
@@ -175,7 +145,7 @@ namespace maolib
 		{
 			if (isConnected)
 			{
-				close(_socket);
+				close_socket(_socket);
 			}
 			isConnected = false;
 		}

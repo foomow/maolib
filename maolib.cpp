@@ -50,13 +50,13 @@ int main()
 	a.Insert(b, 0);
 	cout << a.getJsonString() << endl;
 	cout << a.Size() << endl;
-	OpenApiClient::OpenApiClient client;
+	openapi::OpenApiClient client;
 	client.Connect("api.localhost");
 	Json payload("\"111\"");
-	Json reponse = client.Request(OpenApiClient::GET, "/WeatherForecast", &payload);
+	Json reponse = client.Request(openapi::GET, "/WeatherForecast", &payload);
 	maolib::logger::info(reponse.getJsonString());
 
-	std::thread *x = client.RequestSync(OpenApiClient::GET, "/WeatherForecast", &payload, [](Json reponse)
+	std::thread *x = client.RequestSync(openapi::GET, "/WeatherForecast", &payload, [](Json reponse)
 										{ maolib::logger::info(reponse.getJsonString()); });
 	x->join();
 
