@@ -6,7 +6,6 @@
 #include <sstream>
 #include <iterator>
 #include <stdio.h>
-#include <unistd.h>
 #include <mutex>
 
 #include "../maolib_logger/maolib_logger.h"

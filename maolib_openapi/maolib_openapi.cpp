@@ -97,6 +97,18 @@ namespace maolib
 			{
 				recvLen = recv(_socket, recvBuff, 4096);
 				response.append(recvBuff, recvLen);
+				if (response.find("\r\n\r\n") >= 0) {
+					int linepos = 0;
+					do {
+						int endpos = response.find("\r\n",linepos) + 2;
+						string line = response.substr(linepos, endpos-linepos);
+						if (line._Starts_with("Content-Length")) {
+							string len = line.substr(line.find(":") + 1);
+							int length = stoi(len);
+						}
+						linepos = endpos ;
+					} while (linepos>=0);
+				}
 				if (recvLen > 4 && recvBuff[recvLen - 1] == '\n' && recvBuff[recvLen - 2] == '\r' && recvBuff[recvLen - 3] == '\n' && recvBuff[recvLen - 4] == '\r')
 					break;
 

@@ -51,6 +51,7 @@ int main()
 	cout << a.getJsonString() << endl;
 	cout << a.Size() << endl;
 	openapi::OpenApiClient client;
+#ifdef __linux__
 	client.Connect("api.localhost");
 	Json payload("\"111\"");
 	Json reponse = client.Request(openapi::GET, "/WeatherForecast", &payload);
@@ -68,6 +69,16 @@ int main()
 	maolib::logger::info(res.getJsonString());
 	res = redis_client.ExcuteCommand("get test");
 	maolib::logger::info(res.getJsonString());
+#else
+	client.Connect("restapi.adequateshop.com");
+	Json payload("\"111\"");
+	Json reponse = client.Request(openapi::GET, "/api/Tourist?page=1", &payload);
+	maolib::logger::info(reponse.getJsonString());
+
+	/*std::thread* x = client.RequestSync(openapi::GET, "/api/Tourist?page=1", &payload, [](Json reponse)
+		{ maolib::logger::info(reponse.getJsonString()); });
+	x->join();*/
+#endif // DEBUG
 
 	maolib::logger::dispose();
 }

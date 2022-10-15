@@ -59,7 +59,7 @@ namespace maolib
 		}
 		int close_socket(int socket_fd)
 		{
-			::close(socket_fd);
+			return ::close(socket_fd);
 		}
 	}
 }
