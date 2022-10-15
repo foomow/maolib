@@ -15,25 +15,12 @@ namespace maolib
                 logger::error("client is connected");
                 return false;
             }
-
-            struct sockaddr_in server;
-
-            socket_desc_ = client_socket(AF_INET, SOCK_STREAM, 0);
+            socket_desc_ = maolib::client_socket::connect(host_,port_);
             if (socket_desc_ == -1)
             {
                 logger::error("Could not create socket");
                 return false;
-            }
-
-            server.sin_addr.s_addr = inet_addr(host_.c_str());
-            server.sin_family = AF_INET;
-            server.sin_port = htons(port_);
-
-            if (connect(socket_desc_, (struct sockaddr *)&server, sizeof(server)) < 0)
-            {
-                logger::error("connect error");
-                return false;
-            }
+            }            
             IsConnected = true;
             logger::info("Connected");
             return true;
@@ -118,7 +105,7 @@ namespace maolib
             }
             message = "*" + to_string(seg_count) + "\r\n" + message;
             logger::debug("sending msg:%s", message.c_str());
-            if (send(socket_desc_, message.c_str(), message.size(), 0) < 0)
+            if (maolib::client_socket::send(socket_desc_, message) < 0)
             {
                 logger::error("send failed");
                 requestlock->unlock();
@@ -133,7 +120,7 @@ namespace maolib
         maolib::json::Json redis_client::receiveJson()
         {
             char type;
-            if (recv(socket_desc_, &type, 1, 0) != 1)
+            if (maolib::client_socket::recv(socket_desc_, &type, 1) != 1)
             {
                 logger::error("receive failed");
                 return maolib::json::Json();
@@ -165,7 +152,7 @@ namespace maolib
             string response = "";
             do
             {
-                recv(socket_desc_, recvBuff, 1, 0);
+                maolib::client_socket::recv(socket_desc_, recvBuff, 1);
                 response.append(recvBuff, 1);
                 recvLen = response.size();
                 if (recvLen > 2 && response[recvLen - 1] == '\n' && response[recvLen - 2] == '\r')
@@ -185,7 +172,7 @@ namespace maolib
             string response = "";
             do
             {
-                recv(socket_desc_, recvBuff, 1, 0);
+                maolib::client_socket::recv(socket_desc_, recvBuff, 1);
                 response.append(recvBuff, 1);
                 recvLen = response.size();
                 if (recvLen > 2 && response[recvLen - 1] == '\n' && response[recvLen - 2] == '\r')
@@ -205,7 +192,7 @@ namespace maolib
             string response = "";
             do
             {
-                recv(socket_desc_, recvBuff, 1, 0);
+                maolib::client_socket::recv(socket_desc_, recvBuff, 1);
                 response.append(recvBuff, 1);
                 recvLen = response.size();
                 if (recvLen > 2 && response[recvLen - 1] == '\n' && response[recvLen - 2] == '\r')
@@ -224,7 +211,7 @@ namespace maolib
             string response = "";
             do
             {
-                recvLen = recv(socket_desc_, recvBuff, 1, 0);
+                recvLen = maolib::client_socket::recv(socket_desc_, recvBuff, 1);
                 response.append(recvBuff, 1);
                 int pos = response.find("\r\n");
                 if (pos >= 0)
@@ -244,7 +231,7 @@ namespace maolib
             response = "";
             do
             {
-                recvLen = recv(socket_desc_, recvBuff, strLen > 1024 ? 1024 : strLen, 0);
+                recvLen = maolib::client_socket::recv(socket_desc_, recvBuff, strLen > 1024 ? 1024 : strLen);
                 response.append(recvBuff, recvLen);
                 strLen -= recvLen;
                 if (strLen == 0)
@@ -265,7 +252,7 @@ namespace maolib
             int array_size = 0;
             do
             {
-                recvLen = recv(socket_desc_, recvBuff, 1, 0);
+                recvLen = maolib::client_socket::recv(socket_desc_, recvBuff, 1);
                 response.append(recvBuff, recvLen);
                 int pos = response.find("\r\n");
                 if (pos >= 0)

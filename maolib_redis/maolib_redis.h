@@ -6,13 +6,12 @@
 #include <sstream>
 #include <iterator>
 #include <stdio.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
 #include <unistd.h>
 #include <mutex>
 
 #include "../maolib_logger/maolib_logger.h"
 #include "../maolib_json/maolib_json.h"
+#include "../maolib_socket/maolib_socket.h"
 
 using namespace std;
 namespace maolib
