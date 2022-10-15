@@ -189,6 +189,7 @@ void maolib::logger::log_thread()
 		for (_log log : logs) {
 			string root = ".";
 #ifdef WIN32
+
 			root = filesystem::current_path().generic_string();
 			string stdout_str = "";
 #else
@@ -198,7 +199,7 @@ void maolib::logger::log_thread()
 			cout << stdout_str << endl;
 			string path = root + "/logs/" + time::get_now_string("%Y%m%d");
 #ifdef WIN32
-			filesystem::create_directories(path);
+			std::filesystem::create_directories(path);
 #else
 			string syscmd="mkdir -p "+path;
 			system(syscmd.c_str());

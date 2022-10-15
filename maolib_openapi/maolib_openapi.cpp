@@ -1,9 +1,7 @@
 ﻿#include "maolib_openapi.h"
 #include "../maolib_logger/maolib_logger.h"
 #include "../maolib_socket/maolib_socket.h"
-#include <string.h>
-#include <unistd.h>
-using namespace maolib::socket;
+using namespace maolib::client_socket;
 namespace maolib
 {
 	namespace openapi
@@ -41,7 +39,7 @@ namespace maolib
 			}
 
 			isConnected = false;
-			_socket = socket::connect(host, port);
+			_socket = client_socket::connect(host, port);
 
 			if (_socket == -1)
 			{

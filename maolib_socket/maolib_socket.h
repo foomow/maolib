@@ -7,7 +7,7 @@ using namespace std;
 using namespace maolib::json;
 namespace maolib
 {
-	namespace socket
+	namespace client_socket
 	{
 		int connect(string host, int port);
 		int send(int socket_fd, string);

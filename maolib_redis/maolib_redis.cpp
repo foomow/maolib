@@ -18,7 +18,7 @@ namespace maolib
 
             struct sockaddr_in server;
 
-            socket_desc_ = socket(AF_INET, SOCK_STREAM, 0);
+            socket_desc_ = client_socket(AF_INET, SOCK_STREAM, 0);
             if (socket_desc_ == -1)
             {
                 logger::error("Could not create socket");
