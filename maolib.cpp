@@ -62,23 +62,29 @@ int main()
 	x->join();
 
 	maolib::redis::redis_client redis_client("172.20.0.3");
-	redis_client.Connect();
-	maolib::json::Json res = redis_client.ExcuteCommand("set test 'nihao chengdu. im \"mao\"'");
+	redis_client.ConnectSub();
+	redis_client.PSubscribe("__keyspace@0__:test*", [](Json ret)
+							{ maolib::logger::info("notify:"+ret.getJsonString()); });
+	redis_client.ConnectCmd();
+	maolib::json::Json res = redis_client.ExcuteCommand("set test123 'nihao chengdu. im \"mao\"'");
+	maolib::logger::info(res.getJsonString());
 	maolib::logger::info(res.getJsonString());
 	res = redis_client.ExcuteCommand("keys *");
 	maolib::logger::info(res.getJsonString());
 	res = redis_client.ExcuteCommand("get test");
 	maolib::logger::info(res.getJsonString());
+	this_thread::sleep_for(std::chrono::milliseconds(300));
+	redis_client.CloseCmd();
+	redis_client.CloseSub();
 #else
 	client.Connect("restapi.adequateshop.com");
 	Json payload("\"111\"");
 	Json reponse = client.Request(openapi::GET, "/api/Tourist?page=1", &payload);
 	maolib::logger::info(reponse.getJsonString());
 
-	std::thread* x = client.RequestSync(openapi::GET, "/api/Tourist?page=1", &payload, [](Json reponse)
-		{ maolib::logger::info(reponse.getJsonString()); });
+	std::thread *x = client.RequestSync(openapi::GET, "/api/Tourist?page=1", &payload, [](Json reponse)
+										{ maolib::logger::info(reponse.getJsonString()); });
 	x->join();
 #endif // DEBUG
-
 	maolib::logger::dispose();
 }
