@@ -6,13 +6,11 @@
 #include <sstream>
 #include <iterator>
 #include <stdio.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
 #include <mutex>
 
 #include "../maolib_logger/maolib_logger.h"
 #include "../maolib_json/maolib_json.h"
+#include "../maolib_socket/maolib_socket.h"
 
 using namespace std;
 namespace maolib
@@ -23,23 +21,32 @@ namespace maolib
         {
         public:
             redis_client(string host, int port = 6379);
-            bool Connect();
-            bool Close();
+            bool ConnectCmd();
+            bool ConnectSub();
+            bool CloseCmd();
+            bool CloseSub();
+            bool PSubscribe(string pattern,void (*cb)(Json)=nullptr);
             maolib::json::Json ExcuteCommand(string cmd);
+            void receive_thread();
 
         private:
-            bool IsConnected;
+            bool IsCmdConnected;
+            bool IsSubConnected;
+            thread* recv_thd;
             string host_;
             int port_;
-            int socket_desc_;
+            int socket_cmd_;
+            int socket_sub_;
             std::mutex *requestlock;
-            maolib::json::Json receiveJson();
-            maolib::json::Json receiveSimpleString();
-            maolib::json::Json receiveErrors();
-            maolib::json::Json receiveIntegers();
-            maolib::json::Json receiveBulkString();
-            maolib::json::Json receiveArray();
+            maolib::json::Json receiveJson(int socket_);
+            maolib::json::Json receiveSimpleString(int socket_);
+            maolib::json::Json receiveErrors(int socket_);
+            maolib::json::Json receiveIntegers(int socket_);
+            maolib::json::Json receiveBulkString(int socket_);
+            maolib::json::Json receiveArray(int socket_);
             std::string replaceAll(std::string str, const std::string &replace, const std::string &with);
+            std::string parserMessage(std::string cmd);
+            void (*callback)(Json);
         };
     }
 }

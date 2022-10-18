@@ -7,7 +7,7 @@ using namespace std;
 using namespace maolib::json;
 namespace maolib
 {
-	namespace OpenApiClient
+	namespace openapi
 	{
 		enum REQUEST_METHOD
 		{
@@ -36,9 +36,6 @@ namespace maolib
 			string _host;
 			int _port;
 			bool isConnected;
-			thread* pRecvThread;
-			void recvThread();
-			Json parseResponse(string response);
 			std::mutex requestLock;
 		};
 	}
