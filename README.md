@@ -15,6 +15,8 @@ This my personal c++ lib what is accumulated at my work.
 
 - maolib_time implements 2 functions to make timestamp value and standard formatted time string for NOW.
 
+- maolib-utils has some useful utilities.
+
 
 # usage
 
