@@ -20,6 +20,9 @@ namespace maolib
 		{
 			return Json("[]");
 		}
+		J_TYPE Json::getType(){
+			return _type;
+		}
 		string Json::getJsonString()
 		{
 			make_json_string();
