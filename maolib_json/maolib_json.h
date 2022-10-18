@@ -17,6 +17,7 @@ namespace maolib {
 		enum J_TYPE {
 			J_INVALID,
 			J_NULL,
+			J_BOOLEAN,
 			J_STRING,
 			J_NUMBER,
 			J_OBJECT,
@@ -29,19 +30,21 @@ namespace maolib {
 			explicit Json(string json_str);
 			static Json newObject();
 			static Json newArray();
-			inline J_TYPE getType();
+			J_TYPE getType();
 			string getJsonString();
 			void parse(string json);
 			Json& operator[](string key);
 			Json& operator[](size_t idx);
 			void operator=(string str);
+			void operator=(bool b);
 			void operator=(int n);
 			void operator=(long n);
 			void operator=(long long n);
 			void operator=(double d);
 			string toStdString();
 			int toInt();
-			inline double toDouble();
+			bool toBoolean();
+			double toDouble();
 			long toLong();
 			long long toLLong();
 			size_t Append(Json &json);

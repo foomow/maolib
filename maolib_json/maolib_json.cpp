@@ -70,6 +70,13 @@ namespace maolib
 			_elements.clear();
 			_members.clear();
 		}
+		void Json::operator=(bool b)
+		{
+			_type = J_BOOLEAN;
+			_json_string = b ? "true" : "false";
+			_elements.clear();
+			_members.clear();
+		}
 		void Json::operator=(int n)
 		{
 			_type = J_NUMBER;
@@ -104,9 +111,22 @@ namespace maolib
 			{
 			case J_NUMBER:
 			case J_STRING:
+			case J_BOOLEAN:
 			case J_NULL:
 			case J_INVALID:
 				return _json_string;
+				break;
+			default:
+				_THROW_ERROR("invalid operation");
+				break;
+			}
+		}
+		bool Json::toBoolean()
+		{
+			switch (_type)
+			{
+			case J_BOOLEAN:
+				return _json_string == "true" ? true : false;
 				break;
 			default:
 				_THROW_ERROR("invalid operation");
@@ -337,6 +357,25 @@ namespace maolib
 			case 'n':
 				_type = J_NULL;
 				_json_string = "null";
+				charlist.pop_front();
+				charlist.pop_front();
+				charlist.pop_front();
+				charlist.pop_front();
+				break;
+			case 'T':
+			case 't':
+				_type = J_BOOLEAN;
+				_json_string = "true";
+				charlist.pop_front();
+				charlist.pop_front();
+				charlist.pop_front();
+				charlist.pop_front();
+				break;
+			case 'F':
+			case 'f':
+				_type = J_BOOLEAN;
+				_json_string = "false";
+				charlist.pop_front();
 				charlist.pop_front();
 				charlist.pop_front();
 				charlist.pop_front();
