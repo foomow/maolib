@@ -28,5 +28,9 @@ namespace maolib
 			}
 			return els;
 		}
+		bool string_starts_with(std::string str, std::string pattern)
+		{
+			return str.find(pattern) == 0;
+		}
 	}
 }
